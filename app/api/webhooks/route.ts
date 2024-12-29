@@ -30,6 +30,15 @@ export async function POST(req: Request) {
   // Get the body
   const payload = await req.json();
   const body = JSON.stringify(payload);
+  // console
+  console.log("Headers:", {
+    svix_id,
+    svix_timestamp,
+    svix_signature,
+  });
+
+  console.log("Payload:", payload);
+  console.log("Body:", body);
 
   // Create a new Svix instance with your secret.
   const wh = new Webhook(SIGNING_SECRET);
@@ -60,24 +69,28 @@ export async function POST(req: Request) {
 
     const user = {
       clerkId: id,
-      email: email_addresses[0].email_address,
-      username: username!,
-      firstName: first_name!,
-      lastName: last_name!,
-      photo: image_url!,
+      email: email_addresses?.[0]?.email_address || "",
+      username: username || "unknown",
+      firstName: first_name || "unknown",
+      lastName: last_name || "unknown",
+      photo: image_url || "",
     };
 
-    const newUser = await createUser(user);
-    if (newUser) {
-      const clerk = await clerkClient();
-      await clerk.users.updateUserMetadata(id, {
-        publicMetadata: {
-          userId: newUser._id,
-        },
-      });
+    try {
+      const newUser = await createUser(user);
+      if (newUser) {
+        const cleck = await clerkClient();
+        await cleck.users.updateUserMetadata(id, {
+          publicMetadata: {
+            userId: newUser._id,
+          },
+        });
+      }
+      return NextResponse.json({ message: "OK", user: newUser });
+    } catch (err) {
+      console.error("Error handling user.created:", err);
+      return new Response("Error processing event", { status: 500 });
     }
-
-    return NextResponse.json({ message: "OK", user: newUser });
   }
 
   if (eventType === "user.updated") {
