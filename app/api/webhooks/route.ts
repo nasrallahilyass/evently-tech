@@ -6,11 +6,11 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the webhook
-  const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
+  const SIGNING_SECRET = process.env.SIGNING_SECRET;
 
-  if (!WEBHOOK_SECRET) {
+  if (!SIGNING_SECRET) {
     throw new Error(
-      "Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local"
+      "Please add SIGNING_SECRET from Clerk Dashboard to .env or .env.local"
     );
   }
 
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
   const body = JSON.stringify(payload);
 
   // Create a new Svix instance with your secret.
-  const wh = new Webhook(WEBHOOK_SECRET);
+  const wh = new Webhook(SIGNING_SECRET);
 
   let evt: WebhookEvent;
 
