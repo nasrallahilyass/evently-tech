@@ -1,5 +1,7 @@
-'use server';
+'use server'
+
 import { revalidatePath } from 'next/cache'
+
 import { connectToDatabase } from '@/lib/database'
 import User from '@/lib/database/models/user.model'
 import Order from '@/lib/database/models/order.model'
