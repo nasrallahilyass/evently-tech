@@ -151,7 +151,7 @@ export async function getOrdersByUser({
         populate: {
           path: "organizer",
           model: User,
-          select: "_id firstName lastName",
+          select: "_id username",
         },
       });
 
